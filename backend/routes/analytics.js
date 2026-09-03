@@ -63,12 +63,20 @@ async function getLocation(ip) {
 
     try {
 
+        // Clean the IP address
+        let cleanIp = (ip || "").trim();
+
+        // Remove IPv6-mapped IPv4 prefix
+        if (cleanIp.startsWith("::ffff:")) {
+            cleanIp = cleanIp.substring(7);
+        }
+
         // Localhost addresses cannot be geolocated
         if (
-            !ip ||
-            ip === "::1" ||
-            ip === "127.0.0.1" ||
-            ip === "::ffff:127.0.0.1"
+            !cleanIp ||
+            cleanIp === "::1" ||
+            cleanIp === "127.0.0.1" ||
+            cleanIp === "localhost"
         ) {
 
             return {
@@ -78,9 +86,10 @@ async function getLocation(ip) {
             };
         }
 
+        console.log("Looking up visitor IP:", cleanIp);
 
         const response = await fetch(
-            `https://ipapi.co/${ip}/json/`,
+            `https://ipapi.co/${encodeURIComponent(cleanIp)}/json/`,
             {
                 headers: {
                     "User-Agent": "Aureon-Consultancy-Analytics/1.0"
@@ -88,10 +97,18 @@ async function getLocation(ip) {
             }
         );
 
+        const location = await response.json();
 
+        console.log("IP location response:", location);
+
+        // HTTP error
         if (!response.ok) {
 
-            console.log("Location lookup failed:", response.status);
+            console.log(
+                "Location lookup failed:",
+                response.status,
+                location
+            );
 
             return {
                 country: "Unknown",
@@ -100,9 +117,20 @@ async function getLocation(ip) {
             };
         }
 
+        // ipapi can return an error inside a HTTP 200 response
+        if (location.error) {
 
-        const location = await response.json();
+            console.log(
+                "IP location API error:",
+                location.reason || location.message || location
+            );
 
+            return {
+                country: "Unknown",
+                region: "Unknown",
+                city: "Unknown"
+            };
+        }
 
         return {
 
@@ -113,7 +141,6 @@ async function getLocation(ip) {
             city: location.city || "Unknown"
 
         };
-
 
     } catch (error) {
 
@@ -130,7 +157,6 @@ async function getLocation(ip) {
         };
     }
 }
-
 
 // ==========================================
 // RECORD VISITOR / PAGE VIEW
