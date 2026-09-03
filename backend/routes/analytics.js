@@ -177,13 +177,22 @@ router.post("/track", async (req, res) => {
             req.headers["user-agent"] || "";
 
 
-        const forwardedFor = req.headers["x-forwarded-for"];
+        console.log("===== VISITOR IP DEBUG =====");
+console.log("req.ip:", req.ip);
+console.log("x-forwarded-for:", req.headers["x-forwarded-for"]);
+console.log("x-real-ip:", req.headers["x-real-ip"]);
+console.log("socket remote address:", req.socket.remoteAddress);
+console.log("============================");
+
+const forwardedFor = req.headers["x-forwarded-for"];
 
 const ip =
     (forwardedFor
         ? forwardedFor.split(",")[0].trim()
-        : req.socket.remoteAddress
+        : req.ip || req.socket.remoteAddress
     ) || "";
+
+console.log("IP selected for location lookup:", ip);
 
 
         const finalSessionId =
