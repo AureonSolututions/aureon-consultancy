@@ -97,9 +97,31 @@ async function getLocation(ip) {
             }
         );
 
-        const location = await response.json();
+        const responseText = await response.text();
 
-        console.log("IP location response:", location);
+console.log("IP location HTTP status:", response.status);
+console.log("IP location content type:", response.headers.get("content-type"));
+console.log("IP location raw response:", responseText);
+
+let location;
+
+try {
+    location = JSON.parse(responseText);
+} catch (parseError) {
+
+    console.error(
+        "IP location API did not return JSON:",
+        responseText
+    );
+
+    return {
+        country: "Unknown",
+        region: "Unknown",
+        city: "Unknown"
+    };
+}
+
+console.log("IP location response:", location);
 
         // HTTP error
         if (!response.ok) {
