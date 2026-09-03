@@ -1060,10 +1060,14 @@ async function showDashboard() {
 
 
     document.getElementById(
-        "lastUpdated"
-    ).textContent =
-        "Last updated: " +
-        new Date().toLocaleString();
+    "lastUpdated"
+).textContent =
+    "Last updated: " +
+    new Date().toLocaleString("en-KE", {
+        timeZone: "Africa/Nairobi",
+        dateStyle: "medium",
+        timeStyle: "medium"
+    });
 
 }
 
@@ -1214,8 +1218,12 @@ async function loadRecentVisitors() {
             visitor.browser,
 
             new Date(
-                visitor.visited_at
-            ).toLocaleString()
+    visitor.visited_at
+).toLocaleString("en-KE", {
+    timeZone: "Africa/Nairobi",
+    dateStyle: "medium",
+    timeStyle: "medium"
+})
 
         ].forEach(value => {
 
