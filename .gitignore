@@ -1,0 +1,24 @@
+# Environment secrets
+.env
+backend/.env
+
+# Node.js dependencies
+node_modules/
+backend/node_modules/
+
+# Local database
+backend/data/*.db
+backend/data/*.db-shm
+backend/data/*.db-wal
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup ZIP files
+*.zip
+# Visual Studio Code settings
+.vscode/

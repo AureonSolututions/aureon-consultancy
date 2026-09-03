@@ -1,0 +1,78 @@
+require("dotenv").config();
+
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const jwt = require("jsonwebtoken");
+const path = require("path");
+
+require("./database");
+
+const analyticsRoutes = require("./routes/analytics");
+const contactRoutes = require("./routes/contact");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    message: { error: "Too many requests. Please try again later." }
+});
+
+app.use("/api/", apiLimiter);
+
+const websiteDirectory = path.join(__dirname, "..");
+app.use(express.static(websiteDirectory));
+
+app.post("/api/login", (req, res) => {
+    const { username, password } = req.body;
+
+    if (
+        username !== process.env.ADMIN_USERNAME ||
+        password !== process.env.ADMIN_PASSWORD
+    ) {
+        return res.status(401).json({ error: "Invalid username or password" });
+    }
+
+    const token = jwt.sign(
+        { username, role: "admin" },
+        process.env.JWT_SECRET,
+        { expiresIn: "8h" }
+    );
+
+    res.json({ success: true, token });
+});
+
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/contact", contactRoutes);
+
+app.get("/admin", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "admin.html"));
+});
+
+app.get("/api/status", (req, res) => {
+    res.json({
+        success: true,
+        message: "Aureon backend is running.",
+        time: new Date().toISOString()
+    });
+});
+
+app.listen(PORT, () => {
+    console.log("");
+    console.log("=================================");
+    console.log("   AUREON BACKEND IS RUNNING");
+    console.log("=================================");
+    console.log("");
+    console.log(`Website: http://localhost:${PORT}`);
+    console.log(`Admin:   http://localhost:${PORT}/admin`);
+    console.log(`API:     http://localhost:${PORT}/api/status`);
+    console.log("");
+});
