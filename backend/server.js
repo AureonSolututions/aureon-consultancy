@@ -15,6 +15,9 @@ const contactRoutes = require("./routes/contact");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Render sits behind a proxy, so trust the forwarded visitor IP
+app.set("trust proxy", true);
+
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
 app.use(express.json());

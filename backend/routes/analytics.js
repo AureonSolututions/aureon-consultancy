@@ -151,10 +151,13 @@ router.post("/track", async (req, res) => {
             req.headers["user-agent"] || "";
 
 
-        const ip =
-            req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-            req.socket.remoteAddress ||
-            "";
+        const forwardedFor = req.headers["x-forwarded-for"];
+
+const ip =
+    (forwardedFor
+        ? forwardedFor.split(",")[0].trim()
+        : req.socket.remoteAddress
+    ) || "";
 
 
         const finalSessionId =
