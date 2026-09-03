@@ -28,8 +28,33 @@ const apiLimiter = rateLimit({
 
 app.use("/api/", apiLimiter);
 
-const websiteDirectory = path.join(__dirname, "..");
+const websiteDirectory = path.resolve(__dirname, "..");
+
 app.use(express.static(websiteDirectory));
+
+app.get("/about.html", (req, res) => {
+    res.sendFile(path.join(websiteDirectory, "about.html"));
+});
+
+app.get("/services.html", (req, res) => {
+    res.sendFile(path.join(websiteDirectory, "services.html"));
+});
+
+app.get("/industries.html", (req, res) => {
+    res.sendFile(path.join(websiteDirectory, "industries.html"));
+});
+
+app.get("/approach.html", (req, res) => {
+    res.sendFile(path.join(websiteDirectory, "approach.html"));
+});
+
+app.get("/portfolio.html", (req, res) => {
+    res.sendFile(path.join(websiteDirectory, "portfolio.html"));
+});
+
+app.get("/contact.html", (req, res) => {
+    res.sendFile(path.join(websiteDirectory, "contact.html"));
+});
 
 app.post("/api/login", (req, res) => {
     const { username, password } = req.body;
@@ -65,7 +90,7 @@ app.get("/api/status", (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log("");
     console.log("=================================");
     console.log("   AUREON BACKEND IS RUNNING");
