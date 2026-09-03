@@ -1059,9 +1059,7 @@ async function showDashboard() {
     await loadContacts();
 
 
-    document.getElementById(
-    "lastUpdated"
-).textContent =
+    document.getElementById("lastUpdated").textContent =
     "Last updated: " +
     new Date().toLocaleString("en-KE", {
         timeZone: "Africa/Nairobi",
@@ -1218,7 +1216,7 @@ async function loadRecentVisitors() {
             visitor.browser,
 
             new Date(
-    visitor.visited_at
+    visitor.visited_at.replace(" ", "T") + "Z"
 ).toLocaleString("en-KE", {
     timeZone: "Africa/Nairobi",
     dateStyle: "medium",
