@@ -367,3 +367,16 @@
     }
 
 }
+/* MOBILE HOME PAGE HERO IMAGE */
+@media (max-width: 720px) {
+    .hero-image {
+        height: 250px;
+    }
+
+    .hero-image img {
+        width: 85%;
+        height: 100%;
+        object-fit: contain;
+        object-position: right center;
+    }
+}
